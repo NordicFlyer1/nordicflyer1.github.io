@@ -1,4 +1,4 @@
-# Elite Direto XR
+# Hometrainer
 https://nordicflyer1.github.io/hometrainer/index.html
 
 ride indoor videos on interactive trainer
