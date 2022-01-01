@@ -1,0 +1,346 @@
+<!doctype html>
+<html>
+<head>
+  <title>Direto Free Pedal Analysis</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="direto.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+  <style>
+
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .flex-container > div {
+      margin: 10px;
+      padding: 10px;
+    }
+
+    button {
+      /*width: 100px; */
+      width: auto;
+      font-size: 12px;
+      padding: 5px;
+      border: none;
+      background: #ddd;
+      color: black;
+      cursor: pointer;
+    }
+    button:hover {
+        background: blue;
+    }
+    /* change the BLE connect button bg color */
+    button.connected {
+        background: green;
+    }
+
+  </style>  
+
+</head>
+
+<body onload="onBodyLoad()" id="body">
+
+  <script>
+    'use strict';
+
+    let diretoConnected = false;
+    let chartData = [];
+    let cartChart, cartCfg;
+    let radarChart, radarCfg;
+    let cartCtx, radarCtx;
+    let textPedalData; // some extra text data to show
+    let peanuts = [];
+    let resistanceValues = [0,20,40,60,80,100,125,150,175,200]; // 10 levels
+    let resistanceLevel = 1;
+
+    function onBodyLoad() {
+      document.getElementById('buttonConnectTrainer').addEventListener('click', buttonConnectTrainerOnClick);
+      document.getElementById('increase_resistance').addEventListener('click', increaseResistance);
+      document.getElementById('decrease_resistance').addEventListener('click', decreaseResistance);
+
+      radarCtx = document.getElementById('myRadarChart').getContext('2d');
+      cartCtx = document.getElementById('myCartChart').getContext('2d');
+      textPedalData = document.getElementById('text_pedaldata');
+
+      cartCfg = {
+        data: {
+          datasets: [
+          {
+            label: 'stroke1',
+            yAxisID: 'power-axis',
+            backgroundColor: 'darkblue',
+            borderColor: 'darkblue',
+            data : peanuts[0],
+            type: 'line',
+          },
+          {
+            label: 'stroke2',
+            yAxisID: 'power-axis',
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            data : peanuts[1],
+            type: 'line',
+          },
+          {
+            label: 'stroke3',
+            yAxisID: 'power-axis',
+            backgroundColor: 'steelblue',
+            borderColor: 'steelblue',
+            data : peanuts[2],
+            type: 'line',
+          },
+        ]
+        },
+        options: {
+          animation : false,
+          hover: {
+            animationDuration: 0 // duration of animations when hovering an item
+          },
+          responsiveAnimationDuration: 0, // animation duration after a resize
+          elements: { // settings for all datasets, can be overridden per dataset
+            line : {
+              tension : 0, // 0:disable bezier curves
+              fill : false,
+              stepped : false,
+              borderWidth : 2,
+              borderDash: [],
+            },
+            point  : {
+              radius : 2, // 0 = no dot on the datapoint
+            }
+          },
+          showLine : true,
+          parsing : false,
+          spanGaps : true,
+
+          scales: {
+            xAxes: [{
+              type: 'category',
+              //labels : [0,30,60,90,120,150,180,210,240,270,300,330],
+              labels : [0,15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300,315,330,345],
+              offset: false,
+              ticks: {
+                major: {
+                  enabled: true,
+                  fontStyle: 'bold'
+                },
+                source: 'auto', // 'data'
+              },
+            }],
+            yAxes: [{
+              id: 'power-axis',
+              type: 'linear',
+              position: 'left',
+              gridLines: {
+                drawBorder: false
+              },
+              ticks : {
+                min : 0,
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'power (W)',
+                fontColor : 'darkblue',
+              }
+            }],
+          },
+        } // options
+      };
+      cartChart = new Chart(cartCtx, cartCfg);      
+
+      radarCfg = {
+        type: 'radar',
+        data: {
+          //labels : [0,30,60,90,120,150,180,210,240,270,300,330],
+          labels : [0,15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300,315,330,345],
+          datasets: [
+          {
+            label: 'stroke1',
+            backgroundColor: 'darkblue',
+            borderColor: 'darkblue',
+            data : peanuts[0],
+          },
+          {
+            label: 'stroke2',
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            data : peanuts[1],
+          },
+          {
+            label: 'stroke3',
+            backgroundColor: 'steelblue',
+            borderColor: 'steelblue',
+            data : peanuts[2],
+          },
+        ]
+        },
+        options: {
+          animation : false,
+          hover: {
+            animationDuration: 0 // duration of animations when hovering an item
+          },
+          responsiveAnimationDuration: 0, // animation duration after a resize
+          elements: { // settings for all datasets, can be overridden per dataset
+            line : {
+              tension : 0, // 0 = disable bezier curves
+              fill : false,
+              stepped : false,
+              borderWidth : 2,
+              borderDash: [],
+            },
+            point  : {
+              radius : 2, // 0 = no dot on the datapoint
+            }
+          },
+          showLine : true,
+          parsing : false,
+          spanGaps : true,
+
+          scale: {
+            angleLines : {
+              display : true,
+            },
+            ticks : {
+                min : 0,
+            },
+          },
+        } // options
+      };
+      radarChart = new Chart(radarCtx, radarCfg);
+
+      log("start");
+      document.getElementById('info').addEventListener('dblclick', function () {
+        document.getElementById('info').textContent = "";
+      });
+
+      if (!navigator.bluetooth) {
+        document.getElementById('info').innerHTML = "this page requires web bluetooth to work <br>";
+        document.getElementById('info').innerHTML += "E.g. in Chrome : chrome://flags/#enable-experimental-web-platform-features";
+      }
+
+    } // onBodyLoad
+
+    async function increaseResistance() {
+      resistanceLevel = Math.min(resistanceLevel+1,9);
+      let resistanceLevelSpan = document.getElementById('resistance_level');
+      resistanceLevelSpan.textContent = `Resistance : ${resistanceLevel}`;
+
+      if (diretoConnected) {
+        direto.setResistance(resistanceValues[resistanceLevel]);
+      }
+    } // increaseResistance
+
+    async function decreaseResistance() {
+      resistanceLevel = Math.max(resistanceLevel-1,0);
+      let resistanceLevelSpan = document.getElementById('resistance_level');
+      resistanceLevelSpan.textContent = `Resistance : ${resistanceLevel}`;
+
+      if (diretoConnected) {
+        direto.setResistance(resistanceValues[resistanceLevel]);
+      }
+    } // decreaseResistance
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve,ms));
+    }
+
+    async function buttonConnectTrainerOnClick() {
+      let buttonConnectTrainer = document.getElementById('buttonConnectTrainer');
+      if (!diretoConnected) {
+        try {
+          await direto.connect();
+          log("connect done");
+          await direto.init();
+          await sleep(100);
+          direto.addEventListener('pedaldata', onPedalData);
+          // change button color
+          buttonConnectTrainer.classList.add("connected");
+          diretoConnected = true;
+          await direto.setResistance(resistanceValues[resistanceLevel]);
+          document.getElementById('resistance_level').textContent = `Resistance : ${resistanceLevel}`;
+          //TODO : start returns 'FAILED', but works nevertheless, we need a little delay here
+          await direto.start();
+        } 
+        catch(error)  {
+          log('error connecting direto : ' + error);
+        }
+      } 
+      else { // disconnect
+        try {
+          await direto.stop();
+          await direto.disconnect();
+          log("direto disconnected!");
+          diretoConnected = false;
+          // change button color
+          buttonConnectTrainer.classList.remove("connected");
+        } catch (error) {
+          log (`error disconnecting direto : ${error}`);
+        }
+      }
+    } // buttonConnectTrainerOnClick
+
+    function log(line) {
+      let n = Date.now() & 0xffff;
+      console.log (`${n} - ${line}`);
+    }
+    // for logging on page
+    /*
+    function log(line) {
+      document.getElementById('info').textContent += line + '\n';
+
+    }
+    */
+    function onPedalData(pedalData) {
+      // rotate 3 peanut data
+      peanuts[2] = peanuts[1];
+      peanuts[1] = peanuts[0];
+      peanuts[0] = [...pedalData.peanut];
+      chartData = [...pedalData.peanut];
+      for (let i=0;i<3;i++) {
+        cartCfg.data.datasets[i].data = peanuts[i];
+        radarCfg.data.datasets[i].data = peanuts[i];
+      }
+      cartChart.update();
+      radarChart.update();
+      // update text data
+      textPedalData.innerHTML = `power : min: ${pedalData.minPower} - avg: ${pedalData.avgPower.toFixed(0)} - max: ${pedalData.maxPower} <br>`
+      textPedalData.innerHTML += `uniformity : ${pedalData.uniformity.toFixed(0)} % <br>`
+      textPedalData.innerHTML += `cadence : ${pedalData.cadence} <br>`
+      //textPedalData.innerHTML += `FTMS cadence : ${direto.bikeData.instantaneousCadence} <br>`
+      //textPedalData.innerHTML += `FTMS power : ${direto.bikeData.instantaneousPower}`
+      let hasCadenceSensor = document.getElementById('hasCadenceSensor');
+      if (direto.hasCadenceSensor)
+        hasCadenceSensor.innerHTML = "present!";
+      else
+        hasCadenceSensor.innerHTML = "not present!";
+    } // onPedalData
+    
+  </script>
+
+  <h1 id="connect">Direto Free Pedal Analysis (XR-Test)</h1>
+  <button id="buttonConnectTrainer" title="connect BLE trainer">Trainer</button>
+
+  <pre id="info"></pre>
+
+  <p>Cadence sensor : <span id="hasCadenceSensor">unknown (connect and start pedalling!)</span></p>
+  <span id="resistance_level">Resistance : 1</span>
+  <button id="increase_resistance"> UP</button>
+  <button id="decrease_resistance"> DOWN</button>
+
+  <h2 id="text_pedaldata">--</h2>
+
+  <div class="flex-container">
+    <div style="width:80vw">
+      <canvas id="myCartChart" width="500" height="500"></canvas>
+    </div>
+    <div style="width:80vw">
+      <canvas id="myRadarChart" width="500" height="500"></canvas>
+    </div>
+  </div>
+
+</body>
+</html>
