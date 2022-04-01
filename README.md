@@ -1,5 +1,5 @@
 # Home Trainer
-https://nordicflyer1.github.io/hometrainer/index.html
+https://NordicFlyer1/nordicflyer1.github.io/hometrainer/index.html
 
 ride indoor videos on interactive trainer
 
@@ -13,7 +13,7 @@ Download your efforts as gpx file, for manual upload to strava or other platform
 Have fun!
 
 # Fitness Test
-https://nordicflyer1.github.io/hometrainer/fitnesstest.html
+https://NordicFlyer1/nordicflyer1.github.io/hometrainer/fitnesstest.html
 
 The fitness test starts with a gentle 5 minutes, before activating the trainer's ERG mode.  
 The target power level starts at 100 watts, and increases by 20 watts every 2 minutes.
@@ -23,7 +23,7 @@ The test works in any but the lowest gears, in ERG mode the trainer adjusts the 
 It helps to use a rather high gear, to make the trainer's flywheel spin fast and provide some extra inertia.
  
 # Pedalling Analysis
-https://nordicflyer1.github.io/hometrainer/pedallingAnalysis.html
+https://NordicFlyer1/nordicflyer1.github.io/hometrainer/pedallingAnalysis.html
 
 This page shows how smoothly you are pedalling.  
 It is basically the same as the Elite 'myEtraining' paying feature, but then for free.  
