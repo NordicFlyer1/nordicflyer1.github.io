@@ -1,5 +1,5 @@
 # Home Trainer
-https://nordicflyer1.github.io/hometrainer/index.html
+https://nordicflyer1.github.io/index.html
 
 ride indoor videos on interactive trainer
 
@@ -13,7 +13,7 @@ Download your efforts as gpx file, for manual upload to strava or other platform
 Have fun!
 
 # Fitness Test
-https://nordicflyer1.github.io/hometrainer/fitnesstest.html
+https://nordicflyer1.github.io/fitnesstest.html
 
 The fitness test starts with a gentle 5 minutes, before activating the trainer's ERG mode.  
 The target power level starts at 100 watts, and increases by 20 watts every 2 minutes.
