@@ -23,7 +23,7 @@ The test works in any but the lowest gears, in ERG mode the trainer adjusts the 
 It helps to use a rather high gear, to make the trainer's flywheel spin fast and provide some extra inertia.
  
 # Pedalling Analysis
-https://nordicflyer1.github.io/hometrainer/pedallingAnalysis.html
+https://nordicflyer1.github.io/pedallingAnalysis.html
 
 This page shows how smoothly you are pedalling.  
 It is basically the same as the Elite 'myEtraining' paying feature, but then for free.  
