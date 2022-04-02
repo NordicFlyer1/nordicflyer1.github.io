@@ -1,4 +1,4 @@
-# Trainer
+# Interactive Trainer
 https://nordicflyer1.github.io/index.html
 
 ride indoor videos on interactive trainer
