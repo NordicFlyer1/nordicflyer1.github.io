@@ -1,4 +1,4 @@
-# Home Trainer
+# hometrainer
 https://nordicflyer1.github.io/index.html
 
 ride indoor videos on interactive trainer
@@ -12,7 +12,7 @@ Download your efforts as gpx file, for manual upload to strava or other platform
 
 Have fun!
 
-# Fitness Test
+# fitness test
 https://nordicflyer1.github.io/fitnesstest.html
 
 The fitness test starts with a gentle 5 minutes, before activating the trainer's ERG mode.  
@@ -22,7 +22,7 @@ No matter what gear your bike is in, the ERG mode will make you suffer.
 The test works in any but the lowest gears, in ERG mode the trainer adjusts the resistance automatically.  
 It helps to use a rather high gear, to make the trainer's flywheel spin fast and provide some extra inertia.
  
-# Pedalling Analysis
+# pedalling analysis
 https://nordicflyer1.github.io/pedallingAnalysis.html
 
 This page shows how smoothly you are pedalling.  
